@@ -2,7 +2,6 @@
 
 var _ = require('lodash');
 var Promise = require('bluebird');
-var fetch = require('isomorphic-fetch');
 var WebSocket = require('ws');
 var learning = require('./learning').default;
 
