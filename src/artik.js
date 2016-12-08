@@ -21,11 +21,8 @@ let persons = {};
 let personBuffer;
 
 let initialState = {
-  CurrentLightState: {
-    on: true,
-    brightness: 0.8,
-    colorRGB: COLORS.red,
-  },
+  CurrentLightRedComponent: COLORS.red.r,
+  PredictedLightRedComponent: COLORS.red.r,
   CurrentPresenceCount: 0,
 };
 
@@ -98,24 +95,10 @@ function start(artikToken) {
     .then(() => learning.createAgents())
     // apply arbitrary initial state
     .then(() => learning.setInitialState({
-      color: findColorName(initialState.CurrentLightState.colorRGB.r),
+      color: findColorName(initialState.CurrentLightRedComponent),
       presence: initialState.CurrentPresenceCount,
     }))
-    .then(() => learning.takeLightColorDecision())
-    .then(decision => {
-      devices.craftDevice.state = initialState;
-      let PredictedLightState = _.cloneDeep(devices.craftDevice.state.CurrentLightState);
-      if (!_.isUndefined(decision)) {
-        PredictedLightState.colorRGB = COLORS[decision];
-      }
-
-      devices.craftDevice.state.PredictedLightState = PredictedLightState;
-    })
-    .then(() => sendMessageToDevice(devices.craftDevice.id, {
-        PredictedLightState: devices.craftDevice.state.PredictedLightState,
-        CurrentLightState: devices.craftDevice.state.CurrentLightState,
-        CurrentPresenceCount: devices.craftDevice.state.CurrentPresenceCount,
-      })
+    .then(() => sendMessageToDevice(devices.craftDevice.id, initialState)
     )
     .catch(console.log);
   };
@@ -125,20 +108,14 @@ function start(artikToken) {
     if (!_.isUndefined(evtJSON) && _.has(evtJSON, 'data.actions')) {
       _.reduce(evtJSON.data.actions, (p, v) => {
         switch (v.name) {
-          case 'updateLightState': // light has changed color
-            console.log('action received: updateLightState with red level =', v.parameters.colorRed);
-            let colorName = findColorName(v.parameters.colorRed);
-            devices.craftDevice.state.CurrentLightState = {
-              brightness: v.parameters.brightness,
-              on: v.parameters.on,
-              colorRGB: COLORS[colorName],
-            };
-            devices.craftDevice.state.PredictedLightState = _.cloneDeep(devices.craftDevice.state.CurrentLightState);
-            console.log('new current state =', devices.craftDevice.state.CurrentLightState);
+          case 'lightColorChanged': // light has changed color
+            console.log('action received: updateLightState with red level =', v.parameters.redComponent);
+            devices.craftDevice.state.CurrentLightRedComponent = v.parameters.redComponent;
+            devices.craftDevice.state.PredictedLightRedComponent = v.parameters.redComponent;
             return p
             // update craft with new light state
             // do not take decision, since it might be manually triggered
-            .then(() => learning.updateLightState(colorName));
+            .then(() => learning.updateLightState(findColorName(v.parameters.redComponent)));
           case 'personDetected': // camera detects a new person
             console.log('action received: updatePresenceState');
             persons[v.parameters.id] = 10 * TICK;
@@ -161,7 +138,7 @@ function start(artikToken) {
                 .then(decision => {
                   console.log('decision:', decision);
                   if (!_.isUndefined(decision)) {
-                    devices.craftDevice.state.PredictedLightState.colorRGB = COLORS[decision];
+                    devices.craftDevice.state.PredictedLightRedComponent = COLORS[decision].r;
                   }
                 })
                 .then(() => sendMessageToDevice(evtJSON.ddid, devices.craftDevice.state))
@@ -177,7 +154,7 @@ function start(artikToken) {
             .then(decision => {
               console.log('decision:', decision);
               if (!_.isUndefined(decision)) {
-                devices.craftDevice.state.PredictedLightState.colorRGB = COLORS[decision];
+                devices.craftDevice.state.PredictedLightRedComponent = COLORS[decision].r;
               }
             });
           default:

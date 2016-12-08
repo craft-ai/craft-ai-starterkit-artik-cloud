@@ -13,8 +13,7 @@ dotenv.load();
 var client = craftai({
   owner: process.env.CRAFT_OWNER,
   token: process.env.CRAFT_TOKEN,
-  url: process.env.CRAFT_URL || 'https://integration.craft.ai',
-  operationsAdditionWait: 20,
+  url: process.env.CRAFT_URL || 'https://beta.craft.ai',
 });
 
 var agents = {

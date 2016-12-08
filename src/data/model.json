@@ -8,9 +8,6 @@
     }
   },
   "output": [],
-  "time_quantum":3,
-  "deactivate_forgetting": false,
-  "forgetting_timestep": 200,
-  "forgetting_max_quantums": 1000,
-  "forgetting_similarity_forgetting_ratio": 0.95
+  "time_quantum": 3,
+  "learning_period": 1080
 }
