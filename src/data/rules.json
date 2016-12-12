@@ -1,0 +1,311 @@
+[
+  {
+    "name": "update craft device light state",
+    "description": "notify craft device that light state has changed",
+    "rule": {
+      "if": {
+        "and": [
+          {
+            "sdid": "lightId",
+            "field": "colorRGB.r",
+            "operator": "!=",
+            "operand": {
+              "valueFrom": {
+                "sdid": "craftDeviceId",
+                "field": "CurrentLightRedComponent"
+              }
+            }
+          }
+        ]
+      },
+      "then": [
+        {
+          "ddid": "craftDeviceId",
+          "action": "lightColorChanged",
+          "parameters": {
+            "redComponent": {
+              "valueFrom": {
+                "sdid": "lightId",
+                "field": "colorRGB.r"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "enabled": true
+  },
+  {
+    "name": "set light color to blue",
+    "description": "set light color to blue",
+    "rule": {
+      "if": {
+        "and": [
+          {
+            "sdid": "craftDeviceId",
+            "field": "PredictedLightRedComponent",
+            "operator": "=",
+            "operand": {
+              "value": 50
+            }
+          }
+        ]
+      },
+      "then": [
+        {
+          "ddid": "lightId",
+          "action": "setColorRGB",
+          "parameters": {
+            "colorRGB": {
+              "value": {
+                "red": {
+                  "value": 50
+                },
+                "green": {
+                  "value": 0
+                },
+                "blue": {
+                  "value": 250
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "enabled": true
+  },
+  {
+    "name": "set light color to green",
+    "description": "set light color to green",
+    "rule": {
+      "if": {
+        "and": [
+          {
+            "sdid": "craftDeviceId",
+            "field": "PredictedLightRedComponent",
+            "operator": "=",
+            "operand": {
+              "value": 0
+            }
+          }
+        ]
+      },
+      "then": [
+        {
+          "ddid": "lightId",
+          "action": "setColorRGB",
+          "parameters": {
+            "colorRGB": {
+              "value": {
+                "blue": {
+                  "value": 50
+                },
+                "green": {
+                  "value": 250
+                },
+                "red": {
+                  "value": 0
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "enabled": true
+  },
+  {
+    "name": "set light color to orange",
+    "description": "set light color to orange",
+    "rule": {
+      "if": {
+        "and": [
+          {
+            "sdid": "craftDeviceId",
+            "field": "PredictedLightRedComponent",
+            "operator": "=",
+            "operand": {
+              "value": 200
+            }
+          }
+        ]
+      },
+      "then": [
+        {
+          "ddid": "lightId",
+          "action": "setColorRGB",
+          "parameters": {
+            "colorRGB": {
+              "value": {
+                "red": {
+                  "value": 200
+                },
+                "green": {
+                  "value": 200
+                },
+                "blue": {
+                  "value": 0
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "enabled": true
+  },
+  {
+    "name": "set light color to purple",
+    "description": "set light color to purple",
+    "rule": {
+      "if": {
+        "and": [
+          {
+            "sdid": "craftDeviceId",
+            "field": "PredictedLightRedComponent",
+            "operator": "=",
+            "operand": {
+              "value": 150
+            }
+          }
+        ]
+      },
+      "then": [
+        {
+          "ddid": "lightId",
+          "action": "setColorRGB",
+          "parameters": {
+            "colorRGB": {
+              "value": {
+                "red": {
+                  "value": 150
+                },
+                "green": {
+                  "value": 100
+                },
+                "blue": {
+                  "value": 200
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "enabled": true
+  },
+  {
+    "name": "set light color to red",
+    "description": "set light color to red",
+    "rule": {
+      "if": {
+        "and": [
+          {
+            "sdid": "craftDeviceId",
+            "field": "PredictedLightRedComponent",
+            "operator": "=",
+            "operand": {
+              "value": 250
+            }
+          }
+        ]
+      },
+      "then": [
+        {
+          "ddid": "lightId",
+          "action": "setColorRGB",
+          "parameters": {
+            "colorRGB": {
+              "value": {
+                "red": {
+                  "value": 250
+                },
+                "green": {
+                  "value": 50
+                },
+                "blue": {
+                  "value": 50
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "enabled": true
+  },
+  {
+    "name": "set light color to white",
+    "description": "set light color to white",
+    "rule": {
+      "if": {
+        "and": [
+          {
+            "sdid": "craftDeviceId",
+            "field": "PredictedLightRedComponent",
+            "operator": "=",
+            "operand": {
+              "value": 100
+            }
+          }
+        ]
+      },
+      "then": [
+        {
+          "ddid": "lightId",
+          "action": "setColorRGB",
+          "parameters": {
+            "colorRGB": {
+              "value": {
+                "red": {
+                  "value": 100
+                },
+                "green": {
+                  "value": 100
+                },
+                "blue": {
+                  "value": 50
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "enabled": true
+  },
+  {
+    "name": "update presence",
+    "description": "notify craft device that a new person is visible",
+    "rule": {
+      "if": {
+        "and": [
+          {
+            "sdid": "cameraId",
+            "field": "person.id",
+            "operator": "!=",
+            "operand": {
+              "value": ""
+            }
+          }
+        ]
+      },
+      "then": [
+        {
+          "ddid": "craftDeviceId",
+          "action": "personDetected",
+          "parameters": {
+            "id": {
+              "valueFrom": {
+                "sdid": "cameraId",
+                "field": "person.id"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "enabled": true
+  }
+]

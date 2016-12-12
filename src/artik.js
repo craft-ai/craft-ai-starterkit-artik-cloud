@@ -3,11 +3,11 @@
 var _ = require('lodash');
 var Promise = require('bluebird');
 var WebSocket = require('ws');
-var learning = require('./learning').default;
+var learning = require('./learning');
 
 const TICK = 4; //seconds
 
-const COLORS = require('./constants').colors;
+const COLORS = require('./data/colors.json');
 
 function findColorName(redComponent) {
   return _.findKey(COLORS, c => c.r == 50 * Math.round(redComponent / 50));
@@ -20,23 +20,13 @@ let ws;
 let persons = {};
 let personBuffer;
 
-let initialState = {
-  CurrentLightRedComponent: COLORS.red.r,
-  PredictedLightRedComponent: COLORS.red.r,
-  CurrentPresenceCount: 0,
-};
-
-let devices = {
-  Camera:  {
-    id: 'e42343a96f5344e2827691ac1d2c611d',
-  },
-  Light: {
-    id: process.env.HUE_LIGHT_ID,
-  },
-  craftDevice: {
-    id: process.env.ARTIK_CRAFT_ID,
-    token: process.env.ARTIK_CRAFT_TOKEN,
-    state: {},
+let craftLightDevice = {
+  id: process.env.ARTIK_CRAFT_DEVICE_ID,
+  token: process.env.ARTIK_CRAFT_DEVICE_TOKEN,
+  state: {
+    CurrentLightRedComponent: COLORS.red.r,
+    PredictedLightRedComponent: COLORS.red.r,
+    CurrentPresenceCount: 0,
   },
 };
 
@@ -78,27 +68,21 @@ function start(artikToken) {
 
   var onWsOpen = _.once(initWs);
   function initWs(artikToken) {
-    return Promise.all(
-      _.map(devices, (device, name) => {
-        if (!_.isUndefined(device.token)) {
-          let message = {
-            Authorization: 'bearer ' + device.token,
-            sdid: device.id,
-            type: 'register',
-          };
-          console.log('Registering Artik device', name);
-          return Promise.resolve(ws.send(JSON.stringify(message)));
-        }
-      })
-    )
+    let message = {
+      Authorization: 'bearer ' + craftLightDevice.token,
+      sdid: craftLightDevice.id,
+      type: 'register',
+    };
+    console.log('Registering Artik device');
+    return Promise.resolve(ws.send(JSON.stringify(message)))
     // create craft ai agent
     .then(() => learning.createAgents())
     // apply arbitrary initial state
     .then(() => learning.setInitialState({
-      color: findColorName(initialState.CurrentLightRedComponent),
-      presence: initialState.CurrentPresenceCount,
+      color: findColorName(craftLightDevice.state.CurrentLightRedComponent),
+      presence: craftLightDevice.state.CurrentPresenceCount,
     }))
-    .then(() => sendMessageToDevice(devices.craftDevice.id, initialState)
+    .then(() => sendMessageToDevice(craftLightDevice.id, craftLightDevice.state)
     )
     .catch(console.log);
   };
@@ -110,8 +94,8 @@ function start(artikToken) {
         switch (v.name) {
           case 'lightColorChanged': // light has changed color
             console.log('action received: updateLightState with red level =', v.parameters.redComponent);
-            devices.craftDevice.state.CurrentLightRedComponent = v.parameters.redComponent;
-            devices.craftDevice.state.PredictedLightRedComponent = v.parameters.redComponent;
+            craftLightDevice.state.CurrentLightRedComponent = v.parameters.redComponent;
+            craftLightDevice.state.PredictedLightRedComponent = v.parameters.redComponent;
             return p
             // update craft with new light state
             // do not take decision, since it might be manually triggered
@@ -130,41 +114,41 @@ function start(artikToken) {
                 }
                 return countdown;
               }, {});
-              if (_.size(persons) !== devices.craftDevice.state.CurrentPresenceCount) {
+              if (_.size(persons) !== craftLightDevice.state.CurrentPresenceCount) {
                 // update the number of detected persons
-                devices.craftDevice.state.CurrentPresenceCount = _.size(persons);
-                learning.updatePresenceState(devices.craftDevice.state.CurrentPresenceCount)
+                craftLightDevice.state.CurrentPresenceCount = _.size(persons);
+                learning.updatePresenceState(craftLightDevice.state.CurrentPresenceCount)
                 .then(() => learning.takeLightColorDecision())
                 .then(decision => {
                   console.log('decision:', decision);
                   if (!_.isUndefined(decision)) {
-                    devices.craftDevice.state.PredictedLightRedComponent = COLORS[decision].r;
+                    craftLightDevice.state.PredictedLightRedComponent = COLORS[decision].r;
                   }
                 })
-                .then(() => sendMessageToDevice(evtJSON.ddid, devices.craftDevice.state))
+                .then(() => sendMessageToDevice(evtJSON.ddid, craftLightDevice.state))
                 .catch(console.log);
               }
             }, 1000 * TICK);
-            devices.craftDevice.state.CurrentPresenceCount = _.size(persons);
+            craftLightDevice.state.CurrentPresenceCount = _.size(persons);
             return p
             // 1 - update craft with new data
-            .then(() => learning.updatePresenceState(devices.craftDevice.state.CurrentPresenceCount))
+            .then(() => learning.updatePresenceState(craftLightDevice.state.CurrentPresenceCount))
             // 2 - retrieve decision
             .then(() => learning.takeLightColorDecision())
             .then(decision => {
               console.log('decision:', decision);
               if (!_.isUndefined(decision)) {
-                devices.craftDevice.state.PredictedLightRedComponent = COLORS[decision].r;
+                craftLightDevice.state.PredictedLightRedComponent = COLORS[decision].r;
               }
             });
           default:
             return Promise.reject(new Error(v.name + ' is an unknwon action'));
         }
       }, Promise.resolve())
-      .then(() => sendMessageToDevice(evtJSON.ddid, devices.craftDevice.state))
+      .then(() => sendMessageToDevice(evtJSON.ddid, craftLightDevice.state))
       .catch(console.log);
     }
   };
 };
 
-exports.default = start;
+module.exports = start;

@@ -95,7 +95,7 @@ function takeLightColorDecision() {
   .catch(err => console.log('error while computing light color decision', err));
 };
 
-exports.default = {
+module.exports = {
   createAgents: init,
   updatePresenceState: updatePresenceState,
   updateLightState: updateLightState,

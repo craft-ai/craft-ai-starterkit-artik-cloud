@@ -3,14 +3,14 @@
 var express = require('express');
 var _ = require('lodash');
 var passport = require('passport');
-var OAuth2Strategy = require('passport-oauth2/lib/strategy');
-var artik = require('./artik').default;
+var OAuth2Strategy = require('passport-oauth2');
+var artik = require('./artik');
 
 function authenticate() {
   let router = express.Router();
 
-  const CLIENT_ID = process.env.ARTIK_CLIENT_ID;
-  const CLIENT_SECRET = process.env.ARTIK_CLIENT_SECRET;
+  const CLIENT_ID = process.env.ARTIK_APP_CLIENT_ID;
+  const CLIENT_SECRET = process.env.ARTIK_APP_CLIENT_SECRET;
   const AUTH_URL = 'https://accounts.artik.cloud/authorize';
   const TOKEN_URL = 'https://accounts.artik.cloud/token';
   const CALL_BACK_URL = 'http://localhost:4200/auth/callback';
