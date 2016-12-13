@@ -7,11 +7,11 @@ This demo makes use of a [Philips Hue color lamp with its control bridge](http:/
 ## Architecture ##
 
 ### Overall integration ###
-The integration of **craft ai** in **ARTIK Cloud** makes heavy use of the **ARTIK Cloud** rule engine. The idea is to have a custom-made virtual **ARTIK Cloud** device that will be the intermediate between the other devices and **craft ai**. Using **ARTIK Cloud** rules, this virtual device will be notified whenever the state of a physical device (here, the light bulb and the camera) has changed. Through a [websocket](https://developer.artik.cloud/documentation/api-reference/websockets-api.html), the application will listen to any action sent to this virtual device, redirecting them to a [**craft ai** agent](https://beta.craft.ai/doc#3---create-an-agent) as [context operations](https://beta.craft.ai/doc#4---add-context-operations). This agent will then update its decision tree according to the new context operations received, decision tree that will be used by the application to know what should be the state of the light. The virtual device on **ARTIK Cloud** will be updated with the predicted state of the light, which will in turn trigger an action on the light (still using **ARTIK Cloud** rules), applying the predicted settings.
+The integration of **craft ai** in **ARTIK Cloud** makes heavy use of the **ARTIK Cloud** rule engine. The idea is to have a custom-made virtual **ARTIK Cloud** device that will be the intermediate between the other devices and **craft ai**. Using **ARTIK Cloud** rules, this virtual device will be notified whenever the state of a physical device (here, the light bulb and the camera) has changed. Through a [websocket](https://developer.artik.cloud/documentation/api-reference/websockets-api.html), the application will listen to any action sent to this virtual device, redirecting them to a [**craft ai** agent](https://beta.craft.ai/doc#3---create-an-agent) as [context operations](https://beta.craft.ai/doc#4---add-context-operations). This agent will then update its decision tree according to the new context operations received, decision tree that will be used by the application to predict what should be the state of the light. The virtual device on **ARTIK Cloud** will be updated with the predicted state of the light, which will in turn trigger an action on the light (still using **ARTIK Cloud** rules), applying the predicted settings.
 
 ![Integration architecture](img/craftai_ARTIK_integration.jpg)
 
-### application architecture ###
+### Application architecture ###
 
 The application can be broken down into 3 modules:
 - the `server` module which will handle the authentication with **ARTIK Cloud** and retrieve an application token; this module is the entry point of the application
@@ -20,7 +20,7 @@ The application can be broken down into 3 modules:
 
 ![Application architecture](img/craftai_ARTIK_app.jpg)
 
-> Note: To keep the demo simple, the only feature of the light that is taken into account in the automation is the color. There is a finite set of colors used, which are descretized on a red component scale, as defined in the [src/data/colors.json](src/data/colors.json) file.
+> Note: To keep the demo simple, the only feature of the light that is taken into account in the automation is the color. There is a finite set of colors used, which are discretized on a red component scale, as defined in the [src/data/colors.json](src/data/colors.json) file.
 
 > Following the same pattern as what has been done to manage the color of the light bulb, it would be possible to automate its on/off state as well as its brightness by creating two dedicated agents.
 
@@ -29,6 +29,9 @@ The application can be broken down into 3 modules:
 ### ARTIK Cloud Developers ###
 
 #### ARTIK Cloud Device type ####
+
+> TODO add more details on that.
+
 First you will need to create a custom `craft ai - Light Color Manager` device type, which will be used by your virtual intermediate **ARTIK Cloud** device. This device type should respect the following manifest:
 ![Device type manifest](img/craftai_ARTIK_dt_manifest.jpg)
 
@@ -52,7 +55,7 @@ First you will need to create a custom `craft ai - Light Color Manager` device t
 
 #### Rules ####
 
-![Device type manifest](img/craftai_ARTIK_rules.jpg)
+![Rules](img/craftai_ARTIK_rules.jpg)
 
 The **ARTIK Cloud** rules used in this demo have been created using the [ARTIK Cloud `Rules` page](https://my.artik.cloud/rules).
 It is also possible to create application-dependant rules by using the [ARTIK Cloud Rules REST API](https://developer.artik.cloud/documentation/api-reference/rest-api.html#rules). You can create the required rules through this API by posting the content of the [src/data/rules.json](src/data/rules.json) file (replacing `LightId`, `cameraId` and `craftDeviceId` fields by the actual device ids) using a valid application token.
@@ -65,51 +68,51 @@ Basically the rules are the following:
 - Notifying whenever the light color has changed
 ```js
 if (light.colorRGB.r != craftDevice.CurrentLightRedComponent) {
-    craftDevice.lightColorChanged(redComponent = light.colorRGB.r)
+  craftDevice.lightColorChanged(redComponent = light.colorRGB.r)
 }
 ```
 - Notifying whenever a person has been detected by the camera
 ```js
 if (camera.person.id != '') {
-    craftDevice.personDetected(id = camera.person.id)
+  craftDevice.personDetected(id = camera.person.id)
 }
 ```
 - Applying the result of the decision to the light
 ```js
 if (craftDevice.PredictedLightRedComponent == 0) { // green
-    light.setColorRGB(red = 0, green = 250, blue = 50)
+  light.setColorRGB(red = 0, green = 250, blue = 50)
 }
 ```
 ```js
 if (craftDevice.PredictedLightRedComponent == 50) { // blue
-    light.setColorRGB(red = 50, green = 0, blue = 250)
+  light.setColorRGB(red = 50, green = 0, blue = 250)
 }
 ```
 ```js
 if (craftDevice.PredictedLightRedComponent == 100) { // white
-    light.setColorRGB(red = 100, green = 100, blue = 50)
+  light.setColorRGB(red = 100, green = 100, blue = 50)
 }
 ```
 ```js
 if (craftDevice.PredictedLightRedComponent == 150) { // purple
-    light.setColorRGB(red = 150, green = 100, blue = 200)
+  light.setColorRGB(red = 150, green = 100, blue = 200)
 }
 ```
 ```js
 if (craftDevice.PredictedLightRedComponent == 200) { // orange
-    light.setColorRGB(red = 200, green = 200, blue = 0)
+  light.setColorRGB(red = 200, green = 200, blue = 0)
 }
 ```
 ```js
 if (craftDevice.PredictedLightRedComponent == 250) { // red
-    light.setColorRGB(red = 250, green = 50, blue = 50)
+  light.setColorRGB(red = 250, green = 50, blue = 50)
 }
 ```
 
 
-### Node js application ###
+### Node.JS application ###
 - Download or clone the [sources from GitHub](https://github.com/craft-ai/artik-cloud-webinar/),
-- Install [Node.js](https://nodejs.org/en/download/) on your computer,
+- Install [Node.JS](https://nodejs.org/en/download/) on your computer,
 - Install dependencies by running `npm install` in a terminal from the directory where the sources are.
 - in this directory, create a `.env` file setting the following variables:
     - `CRAFT_TOKEN` allows you to [authenticate your calls to the **craft ai** API](https://beta.craft.ai/doc#header-authentication),
@@ -142,5 +145,4 @@ You can inspect your own decision tree by going to the [**craft ai** inspector](
 ## Help ##
 
 - [craft ai documentation](https://beta.craft.ai/doc)
-- [Slack support channel](https://craft-ai-community.slack.com/)
 - [Mail at support@craft.ai]('mailto:support@craft.ai')
