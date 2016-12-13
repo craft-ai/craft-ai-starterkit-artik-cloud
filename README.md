@@ -1,6 +1,4 @@
-# **craft ai** / Samsung ARTICK Cloud starter kit #
-
-[![Build](https://img.shields.io/travis/craft-ai/craft-ai-starterkit-artik-cloud/master.svg?style=flat-square)](https://travis-ci.org/craft-ai/craft-ai-starterkit-artik-cloud) [![License](https://img.shields.io/badge/license-BSD--3--Clause-42358A.svg?style=flat-square)](LICENSE)
+# Sources for the **craft ai / ARTIK Cloud** webinar #
 
 Integration of [**craft ai**](http://craft.ai) in [**ARTIK Cloud**](https://my.artik.cloud/).
 Application written in Node.js using [**craft ai** official js client](https://www.npmjs.com/package/craft-ai).
@@ -11,7 +9,7 @@ This demo makes use of a [Philips Hue color lamp with its control bridge](http:/
 ### Overall integration ###
 The integration of **craft ai** in **ARTIK Cloud** makes heavy use of the **ARTIK Cloud** rule engine. The idea is to have a custom-made virtual **ARTIK Cloud** device that will be the intermediate between the other devices and **craft ai**. Using **ARTIK Cloud** rules, this virtual device will be notified whenever the state of a physical device (here, the light bulb and the camera) has changed. Through a [websocket](https://developer.artik.cloud/documentation/api-reference/websockets-api.html), the application will listen to any action sent to this virtual device, redirecting them to a [**craft ai** agent](https://beta.craft.ai/doc#3---create-an-agent) as [context operations](https://beta.craft.ai/doc#4---add-context-operations). This agent will then update its decision tree according to the new context operations received, decision tree that will be used by the application to predict what should be the state of the light. The virtual device on **ARTIK Cloud** will be updated with the predicted state of the light, which will in turn trigger an action on the light (still using **ARTIK Cloud** rules), applying the predicted settings.
 
-![Integration architecture](img/craftai_ARTIK_integration.jpg)
+![Integration architecture](img/craftai_artik_architecture.jpg)
 
 ### Application architecture ###
 
@@ -38,7 +36,7 @@ First you will need to create a custom `craft ai - Light Color Manager` [device 
 ![Device type manifest](img/craftai_ARTIK_dt_manifest.jpg)
 Activate the manifest: your device type as been created.
 
-For the purpose of this demo, it is more convenient to change the plan of this device type to "Business" (default is "Hobbyist").
+For the purpose of this demo, it is more convenient to change the plan of this device type from "Hobbyist" to "Business", allowing a higher daily quota per device.
 
 > You do not need worry about pricing: since only one instance of this device type will be created, you will not be charged anything by ARTIK Cloud; you do not even need to input any payment info.
 
@@ -46,9 +44,6 @@ For the purpose of this demo, it is more convenient to change the plan of this d
 - From the [applications](https://developer.artik.cloud/dashboard/applications) page, add a new application
 - set the `Authorization methods` to "Client credentials, auth code" (default value)
 - set the `Auth redirect URL` to http://localhost:4200/callback and save
-- add "read" `Device permissions` to the following device types:
-  - Netatmo Welcome
-  - Philips Hue Color Light
 - add "read" and "write" `Device permissions` to the `craft ai - Light Color Manager` device type you previously defined
 
 ### My ARTIK Cloud ###
