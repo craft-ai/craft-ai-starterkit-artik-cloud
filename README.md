@@ -32,8 +32,13 @@ The application can be broken down into 3 modules:
 
 > TODO add more details on that.
 
-First you will need to create a custom `craft ai - Light Color Manager` device type, which will be used by your virtual intermediate **ARTIK Cloud** device. This device type should respect the following manifest:
+First you will need to create a custom `craft ai - Light Color Manager` [device type](https://developer.artik.cloud/dashboard/devicetypes), which will be used by your virtual intermediate **ARTIK Cloud** device. To do so, simply click on the `+ New device type` button, give it a name, then create a new manifest defining the following fields and actions:
 ![Device type manifest](img/craftai_ARTIK_dt_manifest.jpg)
+Activate the manifest: your device type as been created.
+
+For the purpose of this demo, it is more convenient to change the plan of this device type to "Business" (default is "Hobbyist").
+
+> You do not need worry about pricing: since only one instance of this device type will be created, you will not be charged anything by ARTIK Cloud; you do not even need to input any payment info.
 
 #### ARTIK Cloud Application ####
 - From the [applications](https://developer.artik.cloud/dashboard/applications) page, add a new application
