@@ -5,22 +5,24 @@ var Promise = require('bluebird');
 var WebSocket = require('ws');
 var learning = require('./learning');
 
-const TICK = 4; //seconds
+var TICK = 4; //seconds
 
-const COLORS = require('./data/colors.json');
+var COLORS = require('./data/colors.json');
 
 function findColorName(redComponent) {
-  return _.findKey(COLORS, c => c.r == 50 * Math.round(redComponent / 50));
+  return _.findKey(COLORS, function(c) {
+    return c.r == 50 * Math.round(redComponent / 50);
+  });
 }
 
-const API_BASE_WS_URL = 'wss://api.artik.cloud/v1.1/';
+var API_BASE_WS_URL = 'wss://api.artik.cloud/v1.1/';
 
-let ws;
+var ws;
 
-let persons = {};
-let personBuffer;
+var persons = {};
+var personBuffer;
 
-let craftLightDevice = {
+var craftLightDevice = {
   id: process.env.ARTIK_CRAFT_DEVICE_ID,
   token: process.env.ARTIK_CRAFT_DEVICE_TOKEN,
   state: {
@@ -31,44 +33,49 @@ let craftLightDevice = {
 };
 
 function sendMessageToDevice(deviceId, messageContent, type) {
-  return new Promise((resolve, reject) => {
+  return new Promise(function(resolve, reject) {
     if (!_.isUndefined(ws)) {
-      let message = {
+      var message = {
         ddid: deviceId,
         sdid: deviceId,
         type: type || 'message',
         data: messageContent,
       };
-      console.log('sending message', JSON.stringify(_.pickBy(message, i => !_.isUndefined(i))));
-      ws.send(JSON.stringify(_.pickBy(message, i => !_.isUndefined(i))));
+      var messageStr = JSON.stringify(_.pickBy(message, function(i) {
+        return !_.isUndefined(i);
+      }));
+      console.log('sending message', messageStr);
+      ws.send(messageStr);
       return resolve();
     } else {
       return reject(Error('ARTIK websocket not found'));
     }
   })
-  .catch(err => console.log('error while sending message', err));
+  .catch(function(err) {
+    console.log('error while sending message', err);
+  });
 }
 
 function start(artikToken) {
   ws = new WebSocket(API_BASE_WS_URL + 'websocket?ack=true');
 
-  ws.on('open', () => {
+  ws.on('open', function() {
     console.log('ARTIK WS connection open');
     onWsOpen(artikToken);
   });
-  ws.on('close', () => {
+  ws.on('close', function() {
     console.log('ARTIK WS connection closed');
   });
-  ws.on('error', evt => {
+  ws.on('error', function(evt) {
     console.log('ARTIK WS connection error:', evt.data);
   });
-  ws.on('message', evt => {
+  ws.on('message', function(evt) {
     onMessageReceived(evt);
   });
 
   var onWsOpen = _.once(initWs);
   function initWs(artikToken) {
-    let message = {
+    var message = {
       Authorization: 'bearer ' + craftLightDevice.token,
       sdid: craftLightDevice.id,
       type: 'register',
@@ -76,21 +83,26 @@ function start(artikToken) {
     console.log('Registering Artik device');
     return Promise.resolve(ws.send(JSON.stringify(message)))
     // create craft ai agent
-    .then(() => learning.createAgents())
+    .then(function() {
+      return learning.createAgents();
+    })
     // apply arbitrary initial state
-    .then(() => learning.setInitialState({
-      color: findColorName(craftLightDevice.state.CurrentLightRedComponent),
-      presence: craftLightDevice.state.CurrentPresenceCount,
-    }))
-    .then(() => sendMessageToDevice(craftLightDevice.id, craftLightDevice.state)
-    )
+    .then(function() {
+      return learning.setInitialState({
+        color: findColorName(craftLightDevice.state.CurrentLightRedComponent),
+        presence: craftLightDevice.state.CurrentPresenceCount,
+      });
+    })
+    .then(function() {
+      return sendMessageToDevice(craftLightDevice.id, craftLightDevice.state);
+    })
     .catch(console.log);
   }
 
   function onMessageReceived(evt) {
-    let evtJSON = JSON.parse(evt);
+    var evtJSON = JSON.parse(evt);
     if (!_.isUndefined(evtJSON) && _.has(evtJSON, 'data.actions')) {
-      _.reduce(evtJSON.data.actions, (p, v) => {
+      _.reduce(evtJSON.data.actions, function(p, v) {
         switch (v.name) {
           case 'lightColorChanged': // light has changed color
             console.log('action received: updateLightState with red level =', v.parameters.redComponent);
@@ -99,7 +111,9 @@ function start(artikToken) {
             return p
             // update craft with new light state
             // do not take decision, since it might be manually triggered
-            .then(() => learning.updateLightState(findColorName(v.parameters.redComponent)));
+            .then(function() {
+              return learning.updateLightState(findColorName(v.parameters.redComponent));
+            });
           case 'personDetected': // camera detects a new person
             console.log('action received: updatePresenceState');
             persons[v.parameters.id] = 10 * TICK;
@@ -107,7 +121,7 @@ function start(artikToken) {
               clearInterval(personBuffer);
             }
             // the buffer allows to store a detected person for 10 * TICK seconds
-            personBuffer = setInterval(() => {
+            personBuffer = setInterval(function() {
               persons = _.reduce(persons, (countdown, timeLeft, person) => {
                 if (timeLeft > TICK) {
                   countdown[person] = timeLeft - TICK;
@@ -118,24 +132,32 @@ function start(artikToken) {
                 // update the number of detected persons
                 craftLightDevice.state.CurrentPresenceCount = _.size(persons);
                 learning.updatePresenceState(craftLightDevice.state.CurrentPresenceCount)
-                .then(() => learning.takeLightColorDecision())
-                .then(decision => {
+                .then(function() {
+                  return learning.takeLightColorDecision();
+                })
+                .then(function(decision) {
                   console.log('decision:', decision);
                   if (!_.isUndefined(decision)) {
                     craftLightDevice.state.PredictedLightRedComponent = COLORS[decision].r;
                   }
                 })
-                .then(() => sendMessageToDevice(evtJSON.ddid, craftLightDevice.state))
+                .then(function() {
+                  return sendMessageToDevice(evtJSON.ddid, craftLightDevice.state);
+                })
                 .catch(console.log);
               }
             }, 1000 * TICK);
             craftLightDevice.state.CurrentPresenceCount = _.size(persons);
             return p
             // 1 - update craft with new data
-            .then(() => learning.updatePresenceState(craftLightDevice.state.CurrentPresenceCount))
+            .then(function() {
+              return learning.updatePresenceState(craftLightDevice.state.CurrentPresenceCount);
+            })
             // 2 - retrieve decision
-            .then(() => learning.takeLightColorDecision())
-            .then(decision => {
+            .then(function() {
+              return learning.takeLightColorDecision();
+            })
+            .then(function(decision) {
               console.log('decision:', decision);
               if (!_.isUndefined(decision)) {
                 craftLightDevice.state.PredictedLightRedComponent = COLORS[decision].r;
@@ -145,7 +167,9 @@ function start(artikToken) {
             return Promise.reject(new Error(v.name + ' is an unknwon action'));
         }
       }, Promise.resolve())
-      .then(() => sendMessageToDevice(evtJSON.ddid, craftLightDevice.state))
+      .then(function() {
+        return sendMessageToDevice(evtJSON.ddid, craftLightDevice.state);
+      })
       .catch(console.log);
     }
   }
