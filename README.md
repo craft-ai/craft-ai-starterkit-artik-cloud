@@ -35,7 +35,7 @@ First you will need to create a custom `craft ai - Light Color Manager` device t
 #### ARTIK Cloud Application ####
 - From the [applications](https://developer.artik.cloud/dashboard/applications) page, add a new application
 - set the `Authorization methods` to "Client credentials, auth code" (default value)
-- set the `Auth redirect URL` to http://localhost:4200/auth/callback and save
+- set the `Auth redirect URL` to http://localhost:4200/callback and save
 - add "read" `Device permissions` to the following device types:
   - Netatmo Welcome
   - Philips Hue Color Light
