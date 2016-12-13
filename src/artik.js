@@ -84,14 +84,7 @@ function start(artikToken) {
     return Promise.resolve(ws.send(JSON.stringify(message)))
     // create craft ai agent
     .then(function() {
-      return learning.createAgents();
-    })
-    // apply arbitrary initial state
-    .then(function() {
-      return learning.setInitialState({
-        color: findColorName(craftLightDevice.state.CurrentLightRedComponent),
-        presence: craftLightDevice.state.CurrentPresenceCount,
-      });
+      return learning.createAgent('LightColor');
     })
     .then(function() {
       return sendMessageToDevice(craftLightDevice.id, craftLightDevice.state);
