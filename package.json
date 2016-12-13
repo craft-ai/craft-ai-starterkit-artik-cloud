@@ -1,7 +1,21 @@
 {
-  "name": "SmartHome",
+  "name": "craft-ai-starterkit-artik-cloud",
   "version": "1.0.0",
-  "description": "Samsung Artik / Legrand SmartHome hackathon",
+  "description": "craft ai / Samsung ARTIK Cloud starter kit",
+  "author": {
+    "name": "craft ai",
+    "email": "contact@craft.ai",
+    "url": "http://craft.ai/"
+  },
+  "homepage": "https://github.com/craft-ai/craft-ai-starterkit-artik-cloud",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/craft-ai/craft-ai-starterkit-artik-cloud/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/craft-ai/craft-ai-starterkit-artik-cloud"
+  },
   "scripts": {
     "start": "node ./src/server.js",
     "test": "npm run lint",
