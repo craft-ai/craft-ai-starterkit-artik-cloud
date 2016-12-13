@@ -11,7 +11,7 @@ const COLORS = require('./data/colors.json');
 
 function findColorName(redComponent) {
   return _.findKey(COLORS, c => c.r == 50 * Math.round(redComponent / 50));
-};
+}
 
 const API_BASE_WS_URL = 'wss://api.artik.cloud/v1.1/';
 
@@ -47,7 +47,7 @@ function sendMessageToDevice(deviceId, messageContent, type) {
     }
   })
   .catch(err => console.log('error while sending message', err));
-};
+}
 
 function start(artikToken) {
   ws = new WebSocket(API_BASE_WS_URL + 'websocket?ack=true');
@@ -85,7 +85,7 @@ function start(artikToken) {
     .then(() => sendMessageToDevice(craftLightDevice.id, craftLightDevice.state)
     )
     .catch(console.log);
-  };
+  }
 
   function onMessageReceived(evt) {
     let evtJSON = JSON.parse(evt);
@@ -148,7 +148,7 @@ function start(artikToken) {
       .then(() => sendMessageToDevice(evtJSON.ddid, craftLightDevice.state))
       .catch(console.log);
     }
-  };
-};
+  }
+}
 
 module.exports = start;

@@ -41,7 +41,7 @@ function init() {
       .catch(err => console.log('error at init while adding context operations', err));
     }));
   });
-};
+}
 
 function updatePresenceState(state) {
   console.log('updatePresenceState', state);
@@ -52,7 +52,7 @@ function updatePresenceState(state) {
     }
   }])))
   .catch(err => console.log('error at updatePresenceState while adding context operations', err));
-};
+}
 
 function updateLightState(state) {
   console.log('updateLightState', state);
@@ -63,7 +63,7 @@ function updateLightState(state) {
     }
   }])))
   .catch(err => console.log('error at updateLightState while adding context operations', err));
-};
+}
 
 function setInitialState(state) {
   console.log('setInitialState', state);
@@ -76,7 +76,7 @@ function setInitialState(state) {
     diff: diff
   }], true)))
   .catch(err => console.log('error at setInitialState while adding context operations', err));
-};
+}
 
 function takeLightColorDecision() {
   console.log('takeLightColorDecision');
@@ -93,7 +93,7 @@ function takeLightColorDecision() {
     }
   })
   .catch(err => console.log('error while computing light color decision', err));
-};
+}
 
 module.exports = {
   createAgents: init,

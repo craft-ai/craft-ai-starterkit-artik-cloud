@@ -1,7 +1,6 @@
 'use strict';
 
 var express = require('express');
-var _ = require('lodash');
 var passport = require('passport');
 var OAuth2Strategy = require('passport-oauth2');
 var artik = require('./artik');
@@ -43,10 +42,10 @@ function authenticate() {
   );
 
   router.get(CALL_BACK_PATH,
-    passport.authenticate('oauth2', {failureRedirect: '/error', successRedirect: '/authenticated'})
+    passport.authenticate('oauth2', { failureRedirect: '/error', successRedirect: '/authenticated' })
   );
 
   return router;
-};
+}
 
 exports.default = authenticate;

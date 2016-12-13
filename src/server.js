@@ -1,10 +1,8 @@
 'use strict';
 
-var _  = require('lodash');
 var auth  = require('./auth').default;
 var bodyParser  = require('body-parser');
 var express  = require('express');
-var Moment = require('moment');
 
 const PORT = 4200;
 var router = express.Router();
@@ -20,7 +18,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/authenticated', function(req, res) {
-  res.json({message: 'authentication succeeded'});
+  res.json({ message: 'authentication succeeded' });
 });
 
 let server = app.listen(PORT, () => {
