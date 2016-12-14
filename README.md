@@ -28,11 +28,13 @@ The application can be broken down into 3 modules:
 
 ## Setup ##
 
+### Accounts ###
+
+You'll need accounts to use both **ARTIK Cloud** and **craft ai**; sign up at <https://developer.artik.cloud/account/signup> and <https://beta.craft.ai/signup>.
+
 ### ARTIK Cloud Developers ###
 
 #### ARTIK Cloud Device type ####
-
-> TODO add more details on that.
 
 First you will need to create a custom `craft ai - Light Color Manager` [device type](https://developer.artik.cloud/dashboard/devicetypes), which will be used by your virtual intermediate **ARTIK Cloud** device. To do so, simply click on the `+ New device type` button, give it a name, then create a new manifest defining the following fields and actions:
 ![Device type manifest](img/craftai_ARTIK_dt_manifest.jpg)
@@ -131,7 +133,7 @@ if (craftDevice.PredictedLightRedComponent == 250) { // red
 ### Run ###
 
 ```console
-> npm run start
+npm run start
 ```
 In the web page that opens upon running the application, log into you Samsung account and accept the required permissions.
 
@@ -148,5 +150,5 @@ You can inspect your own decision tree by going to the [**craft ai** inspector](
 
 ## Help ##
 
-- [craft ai documentation](https://beta.craft.ai/doc)
-- [Mail at support@craft.ai]('mailto:support@craft.ai')
+- [**craft ai** user documentation](https://beta.craft.ai/doc)
+- To reach **craft ai** support, use the chat embedded at <https://beta.craft.ai> of send a mail at <support@craft.ai>
