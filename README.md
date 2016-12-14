@@ -1,4 +1,6 @@
-# Sources for the **craft ai / ARTIK Cloud** webinar #
+# **craft ai** / Samsung ARTIK Cloud starter kit #
+
+[![Build](https://img.shields.io/travis/craft-ai/craft-ai-starterkit-artik-cloud/master.svg?style=flat-square)](https://travis-ci.org/craft-ai/craft-ai-starterkit-artik-cloud) [![License](https://img.shields.io/badge/license-BSD--3--Clause-42358A.svg?style=flat-square)](LICENSE)
 
 Integration of [**craft ai**](http://craft.ai) in [**ARTIK Cloud**](https://my.artik.cloud/).
 Application written in Node.js using [**craft ai** official js client](https://www.npmjs.com/package/craft-ai).
