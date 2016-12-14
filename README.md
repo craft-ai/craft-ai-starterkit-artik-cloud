@@ -34,6 +34,7 @@ The application can be broken down into 3 modules:
 
 First you will need to create a custom `craft ai - Light Color Manager` [device type](https://developer.artik.cloud/dashboard/devicetypes), which will be used by your virtual intermediate **ARTIK Cloud** device. To do so, simply click on the `+ New device type` button, give it a name, then create a new manifest defining the following fields and actions:
 ![Device type manifest](img/craftai_ARTIK_dt_manifest.jpg)
+
 Activate the manifest: your device type as been created.
 
 For the purpose of this demo, it is more convenient to change the plan of this device type from "Hobbyist" to "Business", allowing a higher daily quota per device.
@@ -143,6 +144,9 @@ Within a handful of minutes your **craft ai** agent will have learned patterns c
 ![Example of decision tree](img/craftai_ARTIK_decision_tree.jpg)
 
 You can inspect your own decision tree by going to the [**craft ai** inspector](https://beta.craft.ai/inspector/LightColor).
+
+In the end, ryou will have something along those lines:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Q8FAHTRXtlo" frameborder="0"></iframe>
 
 ## Help ##
 
