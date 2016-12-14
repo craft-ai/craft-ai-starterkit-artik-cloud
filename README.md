@@ -1,4 +1,6 @@
-# Sources for the **craft ai / ARTIK Cloud** webinar #
+# **craft ai** / Samsung ARTIK Cloud starter kit #
+
+[![Build](https://img.shields.io/travis/craft-ai/craft-ai-starterkit-artik-cloud/master.svg?style=flat-square)](https://travis-ci.org/craft-ai/craft-ai-starterkit-artik-cloud) [![License](https://img.shields.io/badge/license-BSD--3--Clause-42358A.svg?style=flat-square)](LICENSE)
 
 Integration of [**craft ai**](http://craft.ai) in [**ARTIK Cloud**](https://my.artik.cloud/).
 Application written in Node.js using [**craft ai** official js client](https://www.npmjs.com/package/craft-ai).
@@ -26,13 +28,16 @@ The application can be broken down into 3 modules:
 
 ## Setup ##
 
+### Accounts ###
+
+You'll need accounts to use both **ARTIK Cloud** and **craft ai**; sign up at <https://developer.artik.cloud/account/signup> and <https://beta.craft.ai/signup>.
+
 ### ARTIK Cloud Developers ###
 
 #### ARTIK Cloud Device type ####
 
-> TODO add more details on that.
-
 First you will need to create a custom `craft ai - Light Color Manager` [device type](https://developer.artik.cloud/dashboard/devicetypes), which will be used by your virtual intermediate **ARTIK Cloud** device. To do so, simply click on the `+ New device type` button, give it a name, then create a new manifest defining the following fields and actions:
+
 ![Device type manifest](img/craftai_ARTIK_dt_manifest.jpg)
 
 Activate the manifest: your device type as been created.
@@ -130,7 +135,7 @@ if (craftDevice.PredictedLightRedComponent == 250) { // red
 ### Run ###
 
 ```console
-> npm run start
+npm run start
 ```
 In the web page that opens upon running the application, log into you Samsung account and accept the required permissions.
 
@@ -150,5 +155,5 @@ In the end, ryou will have something along those lines:
 
 ## Help ##
 
-- [craft ai documentation](https://beta.craft.ai/doc)
-- [Mail at support@craft.ai]('mailto:support@craft.ai')
+- [**craft ai** user documentation](https://beta.craft.ai/doc)
+- To reach **craft ai** support, use the embedded chat at <https://beta.craft.ai> or send a mail at <support@craft.ai>
