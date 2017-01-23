@@ -4,7 +4,6 @@ var artik = require('./artik');
 var bodyParser  = require('body-parser');
 var express  = require('express');
 var OAuth2Strategy = require('passport-oauth2');
-var openurl = require('openurl');
 var passport = require('passport');
 
 // Load environment variables from the `.env` file in the working directory
@@ -62,12 +61,12 @@ app.get('/authenticated', function(req, res) {
 });
 
 app.get('/error', function(req, res) {
-  res.send('<h1>Error during ARTIK Cloud authentication!</h1>');
+  res.status(403).send('<h1>Error during ARTIK Cloud authentication!</h1>');
 });
 
 app.listen(PORT, function() {
   var url = HOST + ':' + PORT;
   console.log('Listening to ' + url + '...');
   // Opening the url in the system's default browser
-  openurl.open(url);
+  // require('openurl').open(url);
 });
