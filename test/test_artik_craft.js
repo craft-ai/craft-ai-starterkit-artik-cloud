@@ -1,13 +1,16 @@
-var _ = require('lodash');
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 var chaiHttp = require('chai-http');
 var Promise = require('bluebird');
+var learning = require('../src/learning');
+var artik = require('../src/artik');
+var server = require('../src/server');
 require('dotenv').load({ silent: true });
 
 chai.use(chaiAsPromised);
 chai.use(chaiHttp);
 
+var client = learning.craftClient;
 var url = 'https://accounts.artik.cloud';
 
 var data = {
@@ -23,26 +26,45 @@ var query = {
 };
 
 describe('ARTIK - craft ai integration', () => {
-  before(() => new Promise((resolve, reject) => {
-    require('../src/server');
-    setTimeout(resolve, 1000);
+  before(() => new Promise(resolve => {
+    server.start();
+    setTimeout(resolve, 200);
   }));
-  it('fail to connect to ARTIK', done => chai.request.agent(url)
-    .post('/signin')
-    .query(query)
-    .send({ email: data.email, password: _.join(_.shuffle(data.password), '') })
-    .catch(err => {
-      chai.expect(err).to.have.status(400);
-      done();
-    })
-  );
 
-  it('successfully connected to ARTIK', done => chai.request.agent(url)
+  it('run', done => chai.request.agent(url)
     .post('/signin')
     .query(query)
     .send(data)
     .then(res => {
       chai.expect(res).to.have.status(200);
+      return new Promise(resolve => setTimeout(resolve, 800));
+    })
+    .then(() => client.getAgent('LightColor'))
+    .then(res => {
+      chai.expect(res.id).to.equal('LightColor');
+      return artik.sendMessageToDevice(process.env.ARTIK_CRAFT_DEVICE_ID, { actions: [{ name: 'personDetected', parameters: { id: 'nono' } }] }, 'action');
+    })
+    .then(res => {
+      chai.expect(res).to.equal('OK');
+      return new Promise(resolve => setTimeout(resolve, 1200));
+    })
+    .then(() => client.getAgentContext('LightColor'))
+    .then(res => {
+      chai.expect(res.context.Presence).to.equal(1);
+      return artik.sendMessageToDevice(process.env.ARTIK_CRAFT_DEVICE_ID, { actions: [{ name: 'lightColorChanged', parameters: { redComponent: 0 } }] }, 'action');
+    })
+    .then(res => {
+      chai.expect(res).to.equal('OK');
+      return new Promise(resolve => setTimeout(resolve, 1200));
+    })
+    .then(() => client.getAgentContext('LightColor'))
+    .then(res => {
+      chai.expect(res.context.LightColor).to.equal('green');
+      return new Promise(resolve => setTimeout(resolve, 1500));
+    })
+    .then(() => learning.takeLightColorDecision())
+    .then(res => {
+      chai.expect(res).to.equal('green');
       done();
     })
   );

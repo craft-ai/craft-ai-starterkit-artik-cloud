@@ -6,6 +6,7 @@ var craftai = require('craft-ai').createClient;
 
 // Init craft ai client
 dotenv.load();
+
 var client = craftai({
   owner: process.env.CRAFT_OWNER,
   token: process.env.CRAFT_TOKEN,
@@ -101,6 +102,7 @@ function takeLightColorDecision() {
 }
 
 module.exports = {
+  craftClient: client,
   createAgent: init,
   updatePresenceState: updatePresenceState,
   updateLightState: updateLightState,
