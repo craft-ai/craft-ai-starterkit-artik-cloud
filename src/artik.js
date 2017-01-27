@@ -46,7 +46,7 @@ function sendMessageToDevice(deviceId, messageContent, type) {
       }));
       console.log('sending message', messageStr);
       ws.send(messageStr);
-      return resolve();
+      return resolve('OK');
     } else {
       return reject(Error('ARTIK websocket not found'));
     }
@@ -168,4 +168,7 @@ function start(artikToken) {
   }
 }
 
-module.exports = start;
+module.exports = {
+  start: start,
+  sendMessageToDevice: sendMessageToDevice
+};

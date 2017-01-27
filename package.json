@@ -17,8 +17,9 @@
     "url": "https://github.com/craft-ai/craft-ai-starterkit-artik-cloud"
   },
   "scripts": {
-    "start": "node ./src/server.js",
-    "test": "npm run lint",
+    "start": "node ./src/main.js",
+    "test": "npm run test_node && npm run lint",
+    "test_node": "mocha",
     "lint": "eslint .",
     "fix_lint": "eslint --fix ."
   },
@@ -37,9 +38,14 @@
   },
   "devDependencies": {
     "babel-eslint": "7.1.1",
+    "chai": "3.5.0",
+    "chai-as-promised": "6.0.0",
+    "chai-http": "3.0.0",
     "eslint": "3.12.1",
     "eslint-config-craft-ai": "2.1.2",
-    "eslint-plugin-react": "6.8.0"
+    "eslint-plugin-react": "6.8.0",
+    "mocha": "2.5.3",
+    "mocha-loader": "0.7.1"
   },
   "engines": {
     "node": "4"
