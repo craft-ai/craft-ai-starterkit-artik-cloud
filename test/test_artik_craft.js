@@ -33,6 +33,7 @@ describe('ARTIK - craft ai integration', () => {
 
   it('run', done => chai.request.agent(url)
     .post('/signin')
+    .set('Origin', 'https://accounts.artik.cloud')
     .query(query)
     .send(data)
     .then(res => {
@@ -66,6 +67,10 @@ describe('ARTIK - craft ai integration', () => {
     .then(res => {
       chai.expect(res).to.equal('green');
       done();
+    })
+    .catch(err => {
+      console.log('err', err);
+      chai.expect(err).to.be.null;
     })
   );
 });
