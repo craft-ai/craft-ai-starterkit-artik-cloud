@@ -68,6 +68,9 @@ describe('ARTIK - craft ai integration', () => {
       chai.expect(res).to.equal('green');
       done();
     })
-    .catch(console.log)
+    .catch(err => {
+      console.log('err', err);
+      chai.expect(err).to.be.null;
+    })
   );
 });
