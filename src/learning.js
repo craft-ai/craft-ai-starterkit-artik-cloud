@@ -9,6 +9,7 @@ dotenv.load();
 
 var client = craftai({
   owner: process.env.CRAFT_OWNER,
+  project: process.env.CRAFT_PROJECT,
   token: process.env.CRAFT_TOKEN,
 });
 
