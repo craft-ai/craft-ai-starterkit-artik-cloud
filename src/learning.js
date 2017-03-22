@@ -32,7 +32,7 @@ var agent = {
 var context = [
   {
     timestamp: Moment().unix() - 80,
-    diff: {
+    context: {
       LightColor: 'red',
       Presence: 0
     }
@@ -59,7 +59,7 @@ function updatePresenceState(state) {
   console.log('updatePresenceState', state);
   return client.addAgentContextOperations(agent.id, [{
     timestamp: Moment().unix(),
-    diff: {
+    context: {
       Presence: state
     }
   }])
@@ -72,7 +72,7 @@ function updateLightState(state) {
   console.log('updateLightState', state);
   return client.addAgentContextOperations(agent.id, [{
     timestamp: Moment().unix(),
-    diff: {
+    context: {
       LightColor: '' + state
     }
   }])
