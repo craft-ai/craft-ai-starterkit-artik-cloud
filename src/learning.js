@@ -91,8 +91,8 @@ function takeLightColorDecision() {
     return client.computeAgentDecision(agent.id, now, context.context);
   })
   .then(function(decision) {
-    if (decision.confidence > CONFIDENCE) {
-      return decision.decision.LightColor;
+    if (decision.output.LightColor.confidence > CONFIDENCE) {
+      return decision.output.LightColor.predicted_value;
     } else {
       return;
     }
