@@ -31,7 +31,7 @@ describe('ARTIK - craft ai integration', () => {
     setTimeout(resolve, 200);
   }));
 
-  it('run', done => chai.request.agent(url)
+  it('run', () => chai.request.agent(url)
     .post('/signin')
     .set('Origin', 'https://accounts.artik.cloud')
     .query(query)
@@ -66,7 +66,6 @@ describe('ARTIK - craft ai integration', () => {
     .then(() => learning.takeLightColorDecision())
     .then(res => {
       chai.expect(res).to.equal('green');
-      done();
     })
     .catch(err => {
       console.log('err', err);
