@@ -7,11 +7,7 @@ var craftai = require('craft-ai').createClient;
 // Init craft ai client
 dotenv.load();
 
-var client = craftai({
-  owner: process.env.CRAFT_OWNER,
-  project: process.env.CRAFT_PROJECT,
-  token: process.env.CRAFT_TOKEN,
-});
+var client = craftai(process.env.CRAFT_TOKEN);
 
 var agent = {
   config: {
@@ -42,7 +38,7 @@ var context = [
 var CONFIDENCE = process.env.CONFIDENCE_THRESHOLD || 0;
 
 function init(id) {
-  return client.destroyAgent(id)
+  return client.deleteAgent(id)
   .then(function() {
     agent.id = id;
     return client.createAgent(agent.config, id)
